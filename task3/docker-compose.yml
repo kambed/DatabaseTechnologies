@@ -1,21 +1,12 @@
 version: '3.3'
 services:
-  db:
-    container_name: database
-    image: mysql:5.7
-    restart: unless-stopped
+  mongodb:
+    image: mongo:7.0.6
     env_file: .env
     ports:
-      - '${MYSQL_LOCAL_PORT}:${MYSQL_DOCKER_PORT}'
-    expose:
-      - '${MYSQL_LOCAL_PORT}'
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
+      - '${MONGO_LOCAL_PORT}:${MONGO_DOCKER_PORT}'
     volumes:
-      - ./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - data:/var/lib/mysql
+      - ./src/main/resources/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
   app:
     container_name: spring
     build: .
@@ -24,7 +15,5 @@ services:
     ports:
       - '${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}'
     depends_on:
-      db:
+      mongodb:
         condition: service_healthy
-volumes:
-  data:

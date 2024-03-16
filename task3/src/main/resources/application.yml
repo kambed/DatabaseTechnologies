@@ -3,12 +3,10 @@ spring:
     import: optional:file:.env[.properties]
   application:
     name: SpringBootDocker
-  datasource:
-    username: ${MYSQL_USER:#{user}}
-    password: ${MYSQL_PASSWORD:#{password}}
-    url: ${MYSQL_URL}
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  data:
+    mongodb:
+      host: ${MONGO_HOST}
+      port: ${MONGO_LOCAL_PORT}
+      username: ${MONGO_INITDB_ROOT_USERNAME:#{user}}
+      password: ${MONGO_INITDB_ROOT_PASSWORD:#{password}}
+      database: ${MONGO_DB_NAME}
