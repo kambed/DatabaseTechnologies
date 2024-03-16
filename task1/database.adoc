@@ -1,0 +1,59 @@
+[plantuml,"database-entities-diagram",svg]
+.Database entities diagram
+----
+hide circle
+skinparam linetype ortho
+
+entity "Product" {
+*product_id : number <<generated>>
+--
+*name : text
+*department : text
+description : text
+scopes : text[]
+components : text[]
+}
+
+entity "AuditYearPart" {
+*audit_year_part_id : number <<generated>>
+--
+*name : text
+*start_date : date
+*end_date : date
+*is_closed: boolean
+}
+
+entity "ProductAudit" {
+*audit_id : number <<generated>>
+--
+*audit_year_part: number<FK>
+*product_id: number<FK>
+*user_id: number<FK>
+*is_closed: boolean
+date_of_audit : date
+scopes : text[]
+components : text[]
+result: float
+}
+
+entity "ProductTeamMembers" {
+*product_member_id : number <<generated>>
+--
+*user: number<FK>
+*product: number<FK>
+*type: text
+}
+
+entity "User" {
+*user_id : number <<generated>>
+--
+name : text
+*isAdmin : boolean
+}
+
+User ||..o{ ProductTeamMembers
+Product ||..o{ ProductTeamMembers
+AuditYearPart ||..o{ ProductAudit
+ProductAudit }o..|| Product
+ProductAudit }o..|| User
+----
