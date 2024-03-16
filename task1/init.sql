@@ -1,66 +1,84 @@
-create table product
+USE master;
+GO
+CREATE DATABASE YourDatabaseName;
+GO
+USE YourDatabaseName;
+GO
+
+CREATE TABLE product
 (
-    id          bigint auto_increment
-        primary key,
-    name        varchar(140) not null,
-    department  varchar(50)  not null,
-    description varchar(500) null,
-    components  varchar(500) null,
-    scopes      varchar(500) null
+    id          bigint IDENTITY(1,1) PRIMARY KEY,
+    name        varchar(140) NOT NULL,
+    department  varchar(50)  NOT NULL,
+    description varchar(500) NULL,
+    components  varchar(500) NULL,
+    scopes      varchar(500) NULL
 );
 
-create table audit_year_part
+CREATE TABLE audit_year_part
 (
-    id         bigint auto_increment
-        primary key,
-    name       varchar(50) not null,
-    start_date date        not null,
-    end_date   date        not null,
-    is_closed  tinyint(1) default false
+    id         bigint IDENTITY(1,1) PRIMARY KEY,
+    name       varchar(50) NOT NULL,
+    start_date date        NOT NULL,
+    end_date   date        NOT NULL,
+    is_closed  bit default 0
 );
 
-create table user
+CREATE TABLE [user]
 (
-    id       bigint auto_increment
-        primary key,
-    name     varchar(200) not null,
-    is_admin tinyint(1) default false
+    id       bigint IDENTITY(1,1) PRIMARY KEY,
+    name     varchar(200) NOT NULL,
+    is_admin bit default 0,
+    is_active bit default 1
 );
 
-create table product_audit
+CREATE TABLE product_audit
 (
-    id                 bigint auto_increment
-        primary key,
-    audit_year_part_id bigint not null,
-    status             varchar(30) null,
-    date_of_audit      date null,
-    result             float null,
-    product_id         bigint not null,
-    user_id            bigint not null,
-    components         varchar(500) null,
-    scopes             varchar(500) null,
-    constraint Audit_AuditYearPart_null_fk
-        foreign key (audit_year_part_id) references audit_year_part (id)
-            ON DELETE CASCADE,
-    constraint Audit_Product_null_fk
-        foreign key (product_id) references product (id)
-            ON DELETE CASCADE
-    constraint Audit_User_null_fk
-        foreign key (user_id) references user (id)
-            ON DELETE CASCADE
+    id                 bigint IDENTITY(1,1) PRIMARY KEY,
+    audit_year_part_id bigint NOT NULL,
+    status             varchar(30) NULL,
+    date_of_audit      date NULL,
+    result             float NULL,
+    product_id         bigint NOT NULL,
+    user_id            bigint NOT NULL,
+    components         varchar(500) NULL,
+    scopes             varchar(500) NULL,
+    FOREIGN KEY (audit_year_part_id) REFERENCES audit_year_part (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES [user] (id) ON DELETE CASCADE
 );
 
-create table product_team_member
+CREATE TABLE product_team_member
 (
-    id         bigint auto_increment
-        primary key,
-    user_id    bigint      not null,
-    product_id bigint      not null,
-    type       varchar(50) not null,
-    constraint AuditTeamMembers_Product_null_fk
-        foreign key (product_id) references product (id)
-            ON DELETE CASCADE,
-    constraint AuditTeamMembers_User_Product_null_fk
-        foreign key (user_id) references user (id)
-            ON DELETE CASCADE
+    id         bigint IDENTITY(1,1) PRIMARY KEY,
+    user_id    bigint NOT NULL,
+    product_id bigint NOT NULL,
+    type       varchar(50) NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES [user] (id) ON DELETE CASCADE
 );
+
+INSERT INTO product (name, department, description, components, scopes) VALUES
+('Product 1', 'Department 1', 'Description 1', 'Components 1', 'Scopes 1'),
+('Product 2', 'Department 2', 'Description 2', 'Components 2', 'Scopes 2'),
+('Product 3', 'Department 3', 'Description 3', 'Components 3', 'Scopes 3');
+
+INSERT INTO [user] (name, is_admin, is_active) VALUES
+('User 1', 1, 1),
+('User 2', 0, 1),
+('User 3', 0, 1);
+
+INSERT INTO audit_year_part (name, start_date, end_date, is_closed) VALUES
+('Audit 1', '2020-01-01', '2020-12-31', 0),
+('Audit 2', '2021-01-01', '2021-12-31', 0),
+('Audit 3', '2022-01-01', '2022-12-31', 0);
+
+INSERT INTO product_audit (audit_year_part_id, status, date_of_audit, result, product_id, user_id, components, scopes) VALUES
+(1, 'Status 1', '2020-01-01', 1.1, 1, 1, 'Components 1', 'Scopes 1'),
+(1, 'Status 2', '2020-01-02', 1.2, 2, 1, 'Components 2', 'Scopes 2'),
+(1, 'Status 3', '2020-01-03', 1.3, 3, 1, 'Components 3', 'Scopes 3');
+
+INSERT INTO product_team_member (user_id, product_id, type) VALUES
+(1, 1, 'Type 1'),
+(2, 1, 'Type 2'),
+(3, 1, 'Type 3');
