@@ -1,8 +1,8 @@
 USE master;
 GO
-CREATE DATABASE YourDatabaseName;
+CREATE DATABASE product_audit_db;
 GO
-USE YourDatabaseName;
+USE product_audit_db;
 GO
 
 CREATE TABLE product

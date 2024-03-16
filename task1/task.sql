@@ -1,7 +1,7 @@
 -- Kamil Bednarek 254148
 -- Damian Biskupski 254150
 
-USE YourDatabaseName;
+USE product_audit_db;
 
 
 -- Select procedure and loop
@@ -270,7 +270,7 @@ EXEC dbo.sp_add_jobstep
     @job_name = N'BackupMonthlyDatabaseJob',
     @step_name = N'BackupDatabaseStep',
     @subsystem = N'TSQL',
-    @command = N'BACKUP DATABASE YourDatabaseName TO DISK = ''C:\YOUR_PATH\YourDatabaseName_backup.bak'' WITH INIT',
+    @command = N'BACKUP DATABASE product_audit_db TO DISK = ''C:\YOUR_PATH\product_audit_db_backup.bak'' WITH INIT',
     @retry_attempts = 5,
     @retry_interval = 5;
 
