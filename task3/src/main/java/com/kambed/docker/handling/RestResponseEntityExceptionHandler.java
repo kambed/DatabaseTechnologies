@@ -1,6 +1,6 @@
 package com.kambed.docker.handling;
 
-import com.kambed.docker.logic.exception.MessageNotFoundException;
+import com.kambed.docker.logic.exception.UserNotFoundException;
 import com.kambed.docker.handling.response.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,11 +40,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 request);
     }
 
-    @ExceptionHandler({MessageNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException exc) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("Not found",
                         HttpStatus.NOT_FOUND.value(),
+                        Map.of(exc.getClass().getSimpleName(), exc.getMessage()))
+                );
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(RuntimeException exc) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("Bad request",
+                        HttpStatus.BAD_REQUEST.value(),
                         Map.of(exc.getClass().getSimpleName(), exc.getMessage()))
                 );
     }

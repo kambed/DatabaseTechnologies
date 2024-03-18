@@ -1,31 +1,24 @@
 package com.kambed.docker.logic.model.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@AllArgsConstructor
+@Builder
+@Document(collection = "messages")
 public class Message {
 
-    public Message(String username, String message) {
-        this.username = username;
-        this.message = message;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String username;
-
-    @NotNull
-    private String message;
+    private String id;
+    @DBRef
+    private User sender;
+    @DBRef
+    private User receiver;
+    private String content;
+    private LocalDateTime timestamp;
 }
