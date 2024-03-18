@@ -7,13 +7,6 @@ services:
       - '${MONGO_LOCAL_PORT}:${MONGO_DOCKER_PORT}'
     volumes:
       - ./src/main/resources/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-  app:
-    container_name: spring
-    build: .
-    restart: unless-stopped
-    env_file: .env
-    ports:
-      - '${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}'
-    depends_on:
-      mongodb:
-        condition: service_healthy
+      - mongodb_data:/data/db
+volumes:
+  mongodb_data:
