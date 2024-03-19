@@ -87,20 +87,21 @@ CREATE TABLE product_audit
     audit_date         date NULL,
     audit_score        int NULL,
     audit_comment      varchar(500) NULL,
-    user_id            bigint NOT NULL,
+    audit_result       varchar(50) NULL,
+    user_id            bigint NULL,
     FOREIGN KEY (audit_year_part_id) REFERENCES audit_year_part (id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES [user] (id) ON DELETE CASCADE
 );
 GO
 
-INSERT INTO product_audit (product_id, audit_year_part_id, audit_date, audit_score, audit_comment, user_id) VALUES
-(1, 1, '2022-02-01', 4, 'Good job!', 1),
-(1, 2, '2022-10-02', 5, 'Great job!', 2),
-(2, 2, '2022-10-20', 3, 'Wrong security!', 1),
-(2, 3, '2023-04-05', 4, 'Good job!', 1),
-(2, 4, '2023-12-10', 5, 'Great job!', 2),
-(3, 2, '2022-10-20', 2, 'Not good!!!', 1),
-(3, 4, '2023-12-09', 5, 'Great job!', 2),
-(4, 2, '2022-10-20', 1, '???', 1);
+INSERT INTO product_audit (product_id, audit_year_part_id, audit_date, audit_score, audit_comment, audit_result, user_id) VALUES
+(1, 1, '2022-02-01', 4, 'Good job!', 'PASSED', 1),
+(1, 2, '2022-10-02', 5, 'Great job!', 'PASSED', 2),
+(2, 2, '2022-10-20', 3, 'Wrong security!', 'PASSED', 1),
+(2, 3, '2023-04-05', 4, 'Good job!', 'PASSED', 1),
+(2, 4, '2023-12-10', 5, 'Great job!', 'PASSED', 2),
+(3, 2, '2022-10-20', 2, 'Not good!!!', 'FAILED', 1),
+(3, 4, '2023-12-09', 5, 'Great job!', 'PASSED', 2),
+(4, 2, '2022-10-20', 1, '???', 'FAILED', 1);
 GO
