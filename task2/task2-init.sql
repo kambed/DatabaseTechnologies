@@ -34,3 +34,15 @@ CREATE TABLE BusWay (
     geom GEOMETRY
 );
 GO
+
+-- Tworzymy indeks przestrzenny dla tabeli BusStop
+CREATE SPATIAL INDEX spatial_index_BusStop ON BusStop(geom);
+GO
+
+-- Tworzymy indeks przestrzenny dla tabeli BusLoop
+CREATE SPATIAL INDEX spatial_index_BusLoop ON BusLoop(geom);
+GO
+
+-- Tworzymy indeks przestrzenny dla tabeli BusWay
+CREATE SPATIAL INDEX spatial_index_BusWay ON BusWay(geom);
+GO
