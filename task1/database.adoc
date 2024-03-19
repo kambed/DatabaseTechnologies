@@ -10,7 +10,6 @@ entity "Product" {
 *name : text
 *department : text
 description : text
-scopes : text[]
 components : text[]
 }
 
@@ -19,35 +18,36 @@ entity "AuditYearPart" {
 --
 *name : text
 *start_date : date
-*end_date : date
-*is_closed: boolean
+end_date : date
+is_closed: boolean
 }
 
 entity "ProductAudit" {
 *audit_id : number <<generated>>
 --
-*audit_year_part: number<FK>
 *product_id: number<FK>
+*audit_year_part_id: number<FK>
+audit_date: date
+audit_score: text
+audit_comment: text
 *user_id: number<FK>
-*is_closed: boolean
-date_of_audit : date
-scopes : text[]
-components : text[]
-result: float
 }
 
 entity "ProductTeamMembers" {
 *product_member_id : number <<generated>>
 --
-*user: number<FK>
-*product: number<FK>
+*user_id: number<FK>
+*product_id: number<FK>
 *type: text
 }
 
 entity "User" {
 *user_id : number <<generated>>
 --
-name : text
+*nickname : text
+email : text
+first_name : text
+last_name : text
 *isAdmin : boolean
 }
 
