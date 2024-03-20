@@ -207,3 +207,28 @@ SELECT TOP 1 @inputGeometry2 = geom FROM BusStop ORDER BY NEWID();
 SET @range = 100;
 
 EXEC Find_Location_In_Range @SearchGeometry = @inputGeometry1, @Range = @range, @Location = @inputGeometry2;
+
+
+-- find nearest bus stop
+
+CREATE PROCEDURE FindNearestBusStopWithName
+    @Latitude FLOAT,
+    @Longitude FLOAT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Point GEOMETRY;
+    SET @Point = GEOMETRY::Point(@Latitude, @Longitude, 4326);
+
+    DECLARE @NearestBusStop GEOMETRY;
+    DECLARE @NearestBusStopName NVARCHAR(100);
+
+    SELECT TOP 1 @NearestBusStop = geom, @NearestBusStopName = Name
+    FROM BusStop
+    ORDER BY @Point.STDistance(geom);
+
+    SELECT @NearestBusStopName AS NearestBusStopName, @NearestBusStop.STAsText() AS NearestBusStopLocation;
+END;
+
+EXEC FindNearestBusStopWithName 51.75257680272248, 19.425371845051;
