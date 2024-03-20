@@ -86,12 +86,12 @@ FROM
 LEFT JOIN
     BusLoop bl
 ON
-    bs.geom.STIntersects(bl.geom) = 1
+    bs.geom.STDistance(bl.geom) < 0.000001
 LEFT JOIN
     BusWay bw
 ON
-    bs.geom.STIntersects(bw.geom) = 1;
-
+    bs.geom.STIntersects(bw.geom) = 1
+ORDER BY bw.id;
 -- connect geometric area with coordinate system
 
 CREATE OR ALTER PROCEDURE ProjectGeometryToDifferentSRID
@@ -109,7 +109,7 @@ END;
 DECLARE @inputGeometry GEOMETRY;
 DECLARE @targetSRID INT;
 SET @inputGeometry = (SELECT TOP 1 geom FROM BusLoop);
-SET @targetSRID = 4326;
+SET @targetSRID = 2180;
 
 EXEC ProjectGeometryToDifferentSRID @geometry = @inputGeometry, @targetSRID = @targetSRID;
 
@@ -117,7 +117,7 @@ EXEC ProjectGeometryToDifferentSRID @geometry = @inputGeometry, @targetSRID = @t
 
 -- designation area
 
-CREATE PROCEDURE Spatial_Area_Analysis
+CREATE OR ALTER PROCEDURE Spatial_Area_Analysis
     @Geometry GEOMETRY
 AS
 BEGIN
@@ -127,7 +127,7 @@ BEGIN
     DECLARE @Length FLOAT;
     SET @Length = @Geometry.STLength();
 
-    SELECT @Area AS Area, @Length AS Perimeter;
+    SELECT @Area AS Area, @Length AS Circuit;
 END;
 
 DECLARE @inputGeometry GEOMETRY;

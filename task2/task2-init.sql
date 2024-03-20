@@ -36,19 +36,19 @@ GO
 CREATE SPATIAL INDEX spatial_index_BusStop
     ON BusStop(geom)
     USING GEOMETRY_GRID
-    WITH (BOUNDING_BOX = (0, 0, 500, 500));
+    WITH (BOUNDING_BOX = (51, 19, 52, 20));
 GO
 
 -- Tworzymy indeks przestrzenny dla tabeli BusLoop
 CREATE SPATIAL INDEX spatial_index_BusLoop
     ON BusLoop(geom)
     USING GEOMETRY_GRID
-    WITH (BOUNDING_BOX = (0, 0, 500, 500));
+    WITH (BOUNDING_BOX = (51, 19, 52, 20));
 GO
 
 -- Tworzymy indeks przestrzenny dla tabeli BusWay
 CREATE SPATIAL INDEX spatial_index_BusWay
     ON BusWay(geom)
     USING GEOMETRY_GRID
-    WITH (BOUNDING_BOX = (0, 0, 500, 500));
+    WITH (BOUNDING_BOX = (51, 19, 52, 20));
 GO
