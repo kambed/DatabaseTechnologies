@@ -3,14 +3,6 @@ GO
 USE SpatialDatabase;
 GO
 
--- Włączamy obsługę danych przestrzennych
-EXEC sys.sp_configure 'show advanced options', 1;
-RECONFIGURE;
-GO
-EXEC sys.sp_configure 'clr enabled', 1;
-RECONFIGURE;
-GO
-
 CREATE TABLE BusStop (
     id INT PRIMARY KEY IDENTITY,
     name NVARCHAR(100),

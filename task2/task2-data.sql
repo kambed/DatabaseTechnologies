@@ -16,13 +16,13 @@ SET @roadGeometry2 = @roadGeometry2.MakeValid();
 INSERT INTO BusWay (name, geom) VALUES ('Trasa petla retkinia do Mickiewicza - Żeromskiego', @roadGeometry2);
 
 DECLARE @roadGeometry3 GEOMETRY;
-SET @roadGeometry3 = geometry::STLineFromText('LINESTRING(51.75814656346606 19.449168774079943, 51.75829557347975 19.433621136091748, 51.76831747865045 19.426309578431056)', 4326);
+SET @roadGeometry3 = geometry::STLineFromText('LINESTRING(51.75814656346606 19.449168774079943, 51.75829557347975 19.433621136091748, 51.76835419405131 19.426154913953784)', 4326);
 SET @roadGeometry3 = @roadGeometry3.MakeValid();
 
 INSERT INTO BusWay (name, geom) VALUES ('Trasa Mickiewicza - Żeromskiego do Włókniarzy - Legionów', @roadGeometry3);
 
 DECLARE @roadGeometry4 GEOMETRY;
-SET @roadGeometry4 = geometry::STLineFromText('LINESTRING(51.76831747865045 19.426309578431056, 51.75829557347975 19.433621136091748, 51.75814656346606 19.449168774079943)', 4326);
+SET @roadGeometry4 = geometry::STLineFromText('LINESTRING(51.76835419405131 19.426154913953784, 51.75829557347975 19.433621136091748, 51.75814656346606 19.449168774079943)', 4326);
 SET @roadGeometry4 = @roadGeometry4.MakeValid();
 
 INSERT INTO BusWay (name, geom) VALUES ('Trasa Włókniarzy - Legionów do Mickiewicza - Żeromskiego', @roadGeometry4);
