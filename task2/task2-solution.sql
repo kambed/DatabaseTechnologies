@@ -10,7 +10,7 @@ BEGIN
     SELECT
         id,
         name,
-        geom.ToString() AS geometry_string
+        geom.ToString() AS geography_string
     FROM
         BusStop;
 END;
@@ -21,7 +21,7 @@ BEGIN
     SELECT
         id,
         name,
-        geom.ToString() AS geometry_string
+        geom.ToString() AS geography_string
     FROM
         BusLoop;
 END;
@@ -32,7 +32,7 @@ BEGIN
     SELECT
         id,
         name,
-        geom.ToString() AS geometry_string
+        geom.ToString() AS geography_string
     FROM
         BusWay;
 END;
@@ -45,25 +45,25 @@ EXEC DisplayBusWay;
 
 CREATE PROCEDURE LoadSpatialData
     @name NVARCHAR(100),
-    @geometryData NVARCHAR(MAX),
-    @geometryType NVARCHAR(50)
+    @geographyData NVARCHAR(MAX),
+    @geographyType NVARCHAR(50)
 AS
 BEGIN
-    DECLARE @geometry GEOMETRY;
+    DECLARE @geography GEOGRAPHY;
 
-    SET @geometry = geometry::STGeomFromText(@geometryData, 4326);
+    SET @geography = geography::STGeomFromText(@geographyData, 4326);
 
-    IF @geometryType = 'point'
+    IF @geographyType = 'point'
     BEGIN
-        INSERT INTO BusStop (name, geom) VALUES (@name, @geometry);
+        INSERT INTO BusStop (name, geom) VALUES (@name, @geography);
     END
-    ELSE IF @geometryType = 'linestring'
+    ELSE IF @geographyType = 'linestring'
     BEGIN
-        INSERT INTO BusWay (name, geom) VALUES (@name, @geometry);
+        INSERT INTO BusWay (name, geom) VALUES (@name, @geography);
     END
-    ELSE IF @geometryType = 'polygon'
+    ELSE IF @geographyType = 'polygon'
     BEGIN
-        INSERT INTO BusLoop (name, geom) VALUES (@name, @geometry);
+        INSERT INTO BusLoop (name, geom) VALUES (@name, @geography);
     END
 END;
 
@@ -95,118 +95,118 @@ ORDER BY bw.id;
 -- connect geometric area with coordinate system
 
 CREATE OR ALTER PROCEDURE ProjectGeometryToDifferentSRID
-    @geometry GEOMETRY,
+    @geography GEOGRAPHY,
     @targetSRID INT
 AS
 BEGIN
-    DECLARE @projectedGeometry GEOMETRY;
-    SET @projectedGeometry = @geometry.STAsText();
-    SET @projectedGeometry = geometry::STGeomFromText(@projectedGeometry.ToString(), @targetSRID);
+    DECLARE @projectedGeography GEOGRAPHY;
+    SET @projectedGeography = @geography.STAsText();
+    SET @projectedGeography = geography::STGeomFromText(@projectedGeography.ToString(), @targetSRID);
 
-    SELECT @projectedGeometry AS ProjectedGeometry;
+    SELECT @projectedGeography AS ProjectedGeometry;
 END;
 
-DECLARE @inputGeometry GEOMETRY;
+DECLARE @inputGeography GEOGRAPHY;
 DECLARE @targetSRID INT;
-SET @inputGeometry = (SELECT TOP 1 geom FROM BusLoop);
-SET @targetSRID = 2180;
+SET @inputGeography = (SELECT TOP 1 geom FROM BusLoop);
+SET @targetSRID = 4267;
 
-EXEC ProjectGeometryToDifferentSRID @geometry = @inputGeometry, @targetSRID = @targetSRID;
+EXEC ProjectGeometryToDifferentSRID @geography = @inputGeography, @targetSRID = @targetSRID;
 
 ------------------------------------- 5 -------------------------------------
 
 -- designation area
 
 CREATE OR ALTER PROCEDURE Spatial_Area_Analysis
-    @Geometry GEOMETRY
+    @Geography GEOGRAPHY
 AS
 BEGIN
     DECLARE @Area FLOAT;
-    SET @Area = @Geometry.STArea();
+    SET @Area = @Geography.STArea();
 
     DECLARE @Length FLOAT;
-    SET @Length = @Geometry.STLength();
+    SET @Length = @Geography.STLength();
 
     SELECT @Area AS Area, @Length AS Circuit;
 END;
 
-DECLARE @inputGeometry GEOMETRY;
+DECLARE @inputGeometry GEOGRAPHY;
 SET @inputGeometry = (SELECT TOP 1 geom FROM BusLoop);
 
-EXEC Spatial_Area_Analysis @Geometry = @inputGeometry;
+EXEC Spatial_Area_Analysis @Geography = @inputGeometry;
 
 -- validate area
 
-CREATE PROCEDURE Validate_Geometry
-    @Geometry GEOMETRY
+CREATE PROCEDURE Validate_Geography
+    @Geography GEOGRAPHY
 AS
 BEGIN
     DECLARE @IsValid BIT;
-    SET @IsValid = CASE WHEN @Geometry.STIsValid() = 1 THEN 1 ELSE 0 END;
+    SET @IsValid = CASE WHEN @Geography.STIsValid() = 1 THEN 1 ELSE 0 END;
 
     DECLARE @IsClosed BIT;
-    SET @IsClosed = CASE WHEN @Geometry.STIsClosed() = 1 THEN 1 ELSE 0 END;
+    SET @IsClosed = CASE WHEN @Geography.STIsClosed() = 1 THEN 1 ELSE 0 END;
 
     DECLARE @IsEmpty BIT;
-    SET @IsEmpty = CASE WHEN @Geometry.STIsEmpty() = 1 THEN 1 ELSE 0 END;
+    SET @IsEmpty = CASE WHEN @Geography.STIsEmpty() = 1 THEN 1 ELSE 0 END;
 
     SELECT @IsValid AS IsValid, @IsClosed AS IsClosed, @IsEmpty AS IsEmpty;
 END;
 
-DECLARE @inputGeometry GEOMETRY;
-SET @inputGeometry = (SELECT TOP 1 geom FROM BusLoop);
+DECLARE @inputGeography GEOGRAPHY;
+SET @inputGeography = (SELECT TOP 1 geom FROM BusLoop);
 
-EXEC Validate_Geometry @Geometry = @inputGeometry;
+EXEC Validate_Geography @Geography = @inputGeography;
 
 -- Calculating the distance between geometries
 
 CREATE PROCEDURE Spatial_Areas_Analysis
-    @Geometry1 GEOMETRY,
-    @Geometry2 GEOMETRY
+    @Geography1 GEOGRAPHY,
+    @Geography2 GEOGRAPHY
 AS
 BEGIN
     DECLARE @Distance FLOAT;
-    SET @Distance = @Geometry1.STDistance(@Geometry2);
+    SET @Distance = @Geography1.STDistance(@Geography2);
 
     DECLARE @Intersects BIT;
-    SET @Intersects = IIF(@Geometry1.STIntersects(@Geometry2) = 1, 1, 0);
+    SET @Intersects = IIF(@Geography1.STIntersects(@Geography2) = 1, 1, 0);
 
     SELECT @Distance AS Distance, @Intersects AS Intersects;
 END;
 
-DECLARE @inputGeometry1 GEOMETRY;
-DECLARE @inputGeometry2 GEOMETRY;
+DECLARE @inputGeo1 GEOGRAPHY;
+DECLARE @inputGeo2 GEOGRAPHY;
 
-SELECT TOP 1 @inputGeometry1 = geom FROM BusStop ORDER BY NEWID();
-SELECT TOP 2 @inputGeometry2 = geom FROM BusStop ORDER BY NEWID();
+SELECT TOP 1 @inputGeo1 = geom FROM BusStop ORDER BY NEWID();
+SELECT TOP 2 @inputGeo2 = geom FROM BusStop ORDER BY NEWID();
 
-EXEC Spatial_Areas_Analysis @Geometry1 = @inputGeometry1, @Geometry2 = @inputGeometry2;
+EXEC Spatial_Areas_Analysis @Geography1 = @inputGeo1, @Geography2 = @inputGeo2;
 
 -- determining the location in the given range
 
 CREATE PROCEDURE Find_Location_In_Range
-    @SearchGeometry GEOMETRY,
+    @SearchGeo GEOGRAPHY,
     @Range FLOAT,
-    @Location GEOMETRY
+    @Location GEOGRAPHY
 AS
 BEGIN
     -- Wyszukiwanie lokalizacji w podanym zakresie
     DECLARE @WithinRange BIT;
-    SET @WithinRange = CASE WHEN @SearchGeometry.STDistance(@Location) <= @Range THEN 1 ELSE 0 END;
+    SET @WithinRange = CASE WHEN @SearchGeo.STDistance(@Location) <= @Range THEN 1 ELSE 0 END;
 
     -- Zwracanie wyników
     SELECT @WithinRange AS WithinRange;
 END;
 
-DECLARE @inputGeometry1 GEOMETRY;
-DECLARE @inputGeometry2 GEOMETRY;
+DECLARE @inputGeo1 GEOGRAPHY;
+DECLARE @inputGeo2 GEOGRAPHY;
 DECLARE @range FLOAT;
 
-SELECT TOP 1 @inputGeometry1 = geom FROM BusStop ORDER BY NEWID();
-SELECT TOP 1 @inputGeometry2 = geom FROM BusStop ORDER BY NEWID();
+SELECT TOP 1 @inputGeo1 = geom FROM BusStop ORDER BY NEWID();
+SELECT TOP 1 @inputGeo2 = geom FROM BusStop ORDER BY NEWID();
 SET @range = 100;
 
-EXEC Find_Location_In_Range @SearchGeometry = @inputGeometry1, @Range = @range, @Location = @inputGeometry2;
+EXEC Find_Location_In_Range @SearchGeo = @inputGeo1, @Range = @range, @Location = @inputGeo2;
 
 
 -- find nearest bus stop
@@ -218,10 +218,10 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @Point GEOMETRY;
-    SET @Point = GEOMETRY::Point(@Latitude, @Longitude, 4326);
+    DECLARE @Point GEOGRAPHY;
+    SET @Point = GEOGRAPHY::Point(@Latitude, @Longitude, 4326);
 
-    DECLARE @NearestBusStop GEOMETRY;
+    DECLARE @NearestBusStop GEOGRAPHY;
     DECLARE @NearestBusStopName NVARCHAR(100);
 
     SELECT TOP 1 @NearestBusStop = geom, @NearestBusStopName = Name
